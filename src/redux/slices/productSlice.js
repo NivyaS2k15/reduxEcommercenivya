@@ -1,42 +1,44 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-               
+
 //action return promise 
-export const fetchProducts = createAsyncThunk("products/fetchProducts", async ()=>{
+export const fetchProducts = createAsyncThunk("products/fetchProducts", async () => {
     const result = await axios.get("https://dummyjson.com/products")
     console.log(result);
     //const resulta = result.data.products
     //console.log("resulta",resulta);
-   // return resulta
-   return result.data.products
+    // return resulta
 
-    
-    
+    sessionStorage.setItem("allproducts",JSON.stringify(result.data.products))
+    return result.data.products
+
+
+
 })
 
- const productSlice = createSlice({
-    name:"products",
-    initialState:{
-        allproducts:[],
-        loading:false,
-        errorMsg:""
+const productSlice = createSlice({
+    name: "products",
+    initialState: {
+        allproducts: [],
+        loading: false,
+        errorMsg: ""
 
     },
-    reducers:{
-        
+    reducers: {
+
     },
-    extraReducers:(builder)=>{
-        builder.addCase(fetchProducts.fulfilled,(state,apiResult)=>{
+    extraReducers: (builder) => {
+        builder.addCase(fetchProducts.fulfilled, (state, apiResult) => {
             state.allproducts = apiResult.payload
             state.loading = false
             state.errorMsg = ""
         })
-         builder.addCase(fetchProducts.pending,(state,apiResult)=>{
+        builder.addCase(fetchProducts.pending, (state, apiResult) => {
             state.allproducts = []
             state.loading = true
             state.errorMsg = ""
         })
-        builder.addCase(fetchProducts.rejected,(state,apiResult)=>{
+        builder.addCase(fetchProducts.rejected, (state, apiResult) => {
             state.allproducts = []
             state.loading = false
             state.errorMsg = "Api  call failed"
