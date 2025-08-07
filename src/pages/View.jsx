@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToWishlist } from '../redux/slices/wishlistSlice'
+import { addToCart } from '../redux/slices/cartSlice'
 
 
 const View = () => {
@@ -31,6 +33,36 @@ const View = () => {
   console.log("setptoduct", product);
 
 
+
+  /// wishlist
+  const dispatch = useDispatch()
+  
+  const userwishlist  = useSelector(state=>state.WishlistReducer)
+
+  const handleWishlist =()=>{
+    const existingProduct = userwishlist?.find(item=>item?.id==id)
+    if(existingProduct){
+      alert('product alreardy in ur wishlist')
+    }else{
+      dispatch(addToWishlist(product))
+    }
+  }
+
+
+
+  //cart
+   const userCart = useSelector(state=>state.cartReducer)
+
+  const handleCart =()=>{
+    dispatch(addToCart(product))
+    const existingProduct = userCart?.find(item=>item?.id==id)
+    if(existingProduct){
+      alert('product Quantity is incrementing')
+    }else{
+    alert('product added to cart')
+    }
+  }   
+
   return (
     <>
       <Header />
@@ -40,8 +72,8 @@ const View = () => {
           <div>
               <img height={'400px'} width={'400px'} src={product?.thumbnail} alt="inmg" />
                <div className='flex justify-evenly items-end mt-4'>
-                    <button className='bg-blue-600 text-white p-2 rounded-xl'>Add to wishlist</button>
-                    <button className='bg-green-800 text-white p-3 rounded-xl'>Add to Cart</button>
+                    <button onClick={handleWishlist} className='bg-blue-600 text-white p-3 rounded-xl'>Add to wishlist</button>
+                    <button onClick={handleCart} className='bg-green-800 text-white p-3 rounded-xl'>Add to Cart</button>
                   </div>
           </div>
             <div>
@@ -60,7 +92,7 @@ const View = () => {
               {
                 product?.reviews?.length > 0 ?
                   product?.reviews.map(item => (
-                    <div key={item?.data} className='shadow-border p-2 mb-2'>
+                    <div key={item?.date} className='shadow-border p-2 mb-2'>
                       <h5>
                         <span className='font-bold'>{item?.reviewerName}</span> : <span>{item?.comment}</span>
                       </h5>
